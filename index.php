@@ -37,9 +37,9 @@ if (isset($_SESSION['permissao'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dia Geek</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@500&display=swap"
+        rel="stylesheet">
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -52,13 +52,16 @@ if (isset($_SESSION['permissao'])) {
             background-color: #640d14;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: flex-start;
+            /* Alinha no topo para permitir espaçamento */
+            min-height: 100vh;
             background-image: url('img/fundo.png');
             background-blend-mode: overlay;
             background-size: cover;
             background-position: center;
-            padding: 20px;
+            margin: 0;
+            padding-top: 150px;
+            /* Controla a posição vertical */
         }
 
         .login {
@@ -78,6 +81,9 @@ if (isset($_SESSION['permissao'])) {
             text-align: center;
             display: none;
             flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
         }
 
         .login-section.login {
@@ -154,12 +160,37 @@ if (isset($_SESSION['permissao'])) {
         }
 
         @media (max-width: 600px) {
+            body {
+                padding: 20px 10px;
+                padding-top: 100px;
+                /* Ajusta espaçamento no mobile */
+            }
+
             .login {
                 padding: 10px;
             }
 
+            .login-section {
+                padding: 15px;
+                width: 100%;
+            }
+
             .logo img {
-                width: 80px;
+                width: 140px;
+            }
+
+            .form-group input {
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+
+            .login-button {
+                font-size: 16px;
+                padding: 10px;
+            }
+
+            .center {
+                margin-top: 10px;
             }
         }
     </style>
