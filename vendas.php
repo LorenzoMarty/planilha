@@ -2,11 +2,93 @@
 session_start();
 if (isset($_SESSION['permissao'])) {
     if ($_SESSION['permissao'] == 1) {
+        // Permissão concedida
     } else {
         header('Location: sair.php');
     }
 }
+
+require "conexao.php";
+$conexao = conectar();
+
+// Variáveis para os valores de venda e desconto de cada produto
+$batatap_venda = $batata_desconto = 0;
+$batatag_venda = $batata_desconto = 0;
+$sacolef_venda = $sacole_desconto = 0;
+$sacolec_venda = $sacole_desconto = 0;
+$cachorro_venda = $cachorro_desconto = 0;
+$hamburguer_venda = $hamburguer_desconto = 0;
+$pastel_venda = $pastel_desconto = 0;
+$enroladinho_venda = $enroladinho_desconto = 0;
+$refri_venda = $refri_desconto = 0;
+$bolo_venda = $bolo_desconto = 0;
+
+// Consultas para cada grupo de produtos
+$queries = [
+    "SELECT * FROM produto WHERE id_produto = 1 or 2", // Batata
+    "SELECT * FROM produto WHERE id_produto = 3 or 4", // Sacolé
+    "SELECT * FROM produto WHERE id_produto = 5", // Cachorro Quente
+    "SELECT * FROM produto WHERE id_produto = 6", // Hambúrguer
+    "SELECT * FROM produto WHERE id_produto = 7", // Pastel
+    "SELECT * FROM produto WHERE id_produto = 8", // Enroladinho
+    "SELECT * FROM produto WHERE id_produto = 9", // Refri
+    "SELECT * FROM produto WHERE id_produto = 10", // Bolo de pote
+];
+
+// Processa cada consulta
+foreach ($queries as $sql) {
+    $resultado = mysqli_query($conexao, $sql);
+
+    if ($resultado) {
+        while ($dados = mysqli_fetch_array($resultado)) {
+            // Associa os valores às variáveis correspondentes com base no id_produto
+            switch ($dados['id_produto']) {
+                case 1: // Batata Pequena
+                    $batatap_venda = $dados['valor_venda'];
+                    $batatap_desconto = $dados['valor_desconto'];
+                    break;
+                case 2: // Batata Grande
+                    $batatag_venda = $dados['valor_venda'];
+                    $batatag_desconto = $dados['valor_desconto'];
+                    break;
+                case 3: // Sacolé Fruta
+                    $sacolef_venda = $dados['valor_venda'];
+                    $sacolef_desconto = $dados['valor_desconto'];
+                    break;
+                case 4: // Sacolé Cremoso
+                    $sacolec_venda = $dados['valor_venda'];
+                    $sacolec_desconto = $dados['valor_desconto'];
+                    break;
+                case 5: // Cachorro Quente
+                    $cachorro_venda = $dados['valor_venda'];
+                    $cachorro_desconto = $dados['valor_desconto'];
+                    break;
+                case 6: // Hambúrguer
+                    $hamburguer_venda = $dados['valor_venda'];
+                    $hamburguer_desconto = $dados['valor_desconto'];
+                    break;
+                case 7: // Pastel
+                    $pastel_venda = $dados['valor_venda'];
+                    $pastel_desconto = $dados['valor_desconto'];
+                    break;
+                case 8: // Enroladinho
+                    $enroladinho_venda = $dados['valor_venda'];
+                    $enroladinho_desconto = $dados['valor_desconto'];
+                    break;
+                case 9: // Refri
+                    $refri_venda = $dados['valor_venda'];
+                    $refri_desconto = $dados['valor_desconto'];
+                    break;
+                case 10: // Bolo de pote
+                    $bolo_venda = $dados['valor_venda'];
+                    $bolo_desconto = $dados['valor_desconto'];
+                    break;
+            }
+        }
+    }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -375,6 +457,30 @@ if (isset($_SESSION['permissao'])) {
         footer a:hover {
             text-decoration: underline;
         }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #28a745;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            padding: 16px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0s 0.5s;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
     </style>
 </head>
 
@@ -391,15 +497,21 @@ if (isset($_SESSION['permissao'])) {
             <a href="sair.php">Sair</a>
         </div>
     </nav>
+
+    <!-- Toast de Venda Concluída -->
+    <div id="toast" class="toast">Venda concluída com sucesso!</div>
+
+
     <div class="container">
         <!-- Batata Frita -->
-        <div class="card">
+        <div class="card" id="batata">
             <img src="img/batata.jpg" alt="Batata Frita">
             <h2>Batata Frita</h2>
+            <p class="price">R$ <?= number_format($batatap_venda, 2, ',', '.') ?></p>
             <select id="batata-size">
                 <option value="" disabled selected>Selecione um tamanho</option> <!-- Label não selecionável -->
-                <option value="batata pequena">Pequena - R$ 5,00</option>
-                <option value="batata grande">Grande - R$ 10,00</option>
+                <option value="batata pequena">Pequena</option>
+                <option value="batata grande">Grande</option>
             </select>
             <div class="controls">
                 <button class="btn minus">-</button>
@@ -411,13 +523,14 @@ if (isset($_SESSION['permissao'])) {
         </div>
 
         <!-- Sacolé -->
-        <div class="card">
+        <div class="card" id="sacole">
             <img src="img/sacole.jpg" alt="Sacolé">
             <h2>Sacolé</h2>
+            <p class="price">R$ <?= number_format($sacolef_venda, 2, ',', '.') ?></p>
             <select id="sacole-type">
                 <option value="" disabled selected>Selecione um tipo</option> <!-- Label não selecionável -->
-                <option value="sacole fruta">Fruta - R$ 3,00</option>
-                <option value="sacole cremoso">Cremoso - R$ 5,00</option>
+                <option value="sacole fruta">Fruta</option>
+                <option value="sacole cremoso">Cremoso</option>
             </select>
             <div class="controls">
                 <button class="btn minus">-</button>
@@ -432,6 +545,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/cachorro.jpg" alt="Cachorro quente">
             <h2>Cachorro Quente</h2>
+            <p>R$ <?= number_format($cachorro_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -445,6 +559,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/hamburguer.jpg" alt="Hambúrguer">
             <h2>Hambúrguer</h2>
+            <p>R$ <?= number_format($hamburguer_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -458,6 +573,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/pastel.jpg" alt="pastel">
             <h2>Pastel</h2>
+            <p>R$ <?= number_format($pastel_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -471,6 +587,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/enroladinho.jpg" alt="enroladinho">
             <h2>Enroladinho</h2>
+            <p>R$ <?= number_format($enroladinho_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -484,6 +601,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/refri.webp" alt="refri">
             <h2>Refri</h2>
+            <p>R$ <?= number_format($refri_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -497,6 +615,7 @@ if (isset($_SESSION['permissao'])) {
         <div class="card">
             <img src="img/bolodepote.jpeg" alt="refri">
             <h2>Bolo de pote</h2>
+            <p>R$ <?= number_format($bolo_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -541,6 +660,15 @@ if (isset($_SESSION['permissao'])) {
         }
     </script>
     <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
         document.querySelectorAll('.card').forEach(card => {
             const input = card.querySelector('input');
             const minusButton = card.querySelector('.minus');
@@ -548,6 +676,57 @@ if (isset($_SESSION['permissao'])) {
             const addButton = card.querySelector('.add-btn');
             const select = card.querySelector('select'); // Pode ser null para alguns itens
             const priceToggleBtn = card.querySelector('.price-toggle-btn');
+            const priceElement = card.querySelector('.price');
+
+            const updatePrice = () => {
+                const selectedOption = select ? select.value : null;
+                let priceNormal, pricePromo;
+
+                // Determina os preços com base no produto
+                if (card.id === 'batata') {
+                    if (selectedOption === 'batata pequena') {
+                        priceNormal = <?= $batatap_venda ?>;
+                        pricePromo = <?= $batatap_desconto ?>;
+                    } else if (selectedOption === 'batata grande') {
+                        priceNormal = <?= $batatag_venda ?>;
+                        pricePromo = <?= $batatag_desconto ?>;
+                    }
+                } else if (card.id === 'sacole') {
+                    if (selectedOption === 'sacole fruta') {
+                        priceNormal = <?= $sacolef_venda ?>;
+                        pricePromo = <?= $sacolef_desconto ?>;
+                    } else if (selectedOption === 'sacole cremoso') {
+                        priceNormal = <?= $sacolec_venda ?>;
+                        pricePromo = <?= $sacolec_desconto ?>;
+                    }
+                } else {
+                    // Adicione outras condições para outros produtos aqui
+                }
+
+                // Atualiza o preço automaticamente com base na seleção
+                if (priceToggleBtn.classList.contains('normal')) {
+                    priceElement.textContent = `R$ ${priceNormal.toFixed(2).replace('.', ',')}`;
+                } else {
+                    priceElement.textContent = `R$ ${pricePromo.toFixed(2).replace('.', ',')}`;
+                }
+            };
+
+            if (select) {
+                select.addEventListener('change', updatePrice);
+            }
+
+            priceToggleBtn.addEventListener('click', () => {
+                if (priceToggleBtn.classList.contains('normal')) {
+                    priceToggleBtn.classList.remove('normal');
+                    priceToggleBtn.classList.add('promo');
+                    priceToggleBtn.innerHTML = '<i class="fa fa-check"></i>'; // Ícone de "Corrigido"
+                } else {
+                    priceToggleBtn.classList.remove('promo');
+                    priceToggleBtn.classList.add('normal');
+                    priceToggleBtn.innerHTML = '<i class="fa fa-times"></i>'; // Ícone de "X"
+                }
+                updatePrice();
+            });
 
             minusButton.addEventListener('click', () => {
                 const currentValue = parseInt(input.value) || 0;
@@ -560,66 +739,54 @@ if (isset($_SESSION['permissao'])) {
                 const currentValue = parseInt(input.value) || 0;
                 input.value = currentValue + 1;
             });
+        });
 
-            priceToggleBtn.addEventListener('click', () => {
-                if (priceToggleBtn.classList.contains('normal')) {
-                    priceToggleBtn.classList.remove('normal');
-                    priceToggleBtn.classList.add('promo');
-                    priceToggleBtn.innerHTML = '<i class="fa fa-check"></i>'; // Ícone de "Corrigido"
+        addButton.addEventListener('click', (event) => {
+            event.preventDefault();
+
+            const productName = card.querySelector('h2').innerText.trim();
+            const quantity = parseInt(input.value) || 0;
+            const isPromo = priceToggleBtn.classList.contains('promo') ? 'Promocional' : 'Normal';
+
+            let option = 'Sem opção';
+            if (select) {
+                const selectedOption = select.selectedIndex > 0 ? select.options[select.selectedIndex].text : 'Sem opção';
+                option = selectedOption.split(' - ')[0];
+            }
+
+            if (quantity > 0) {
+                const tableBody = document.getElementById('sales-table-body');
+
+                const existingRow = Array.from(tableBody.querySelectorAll('tr')).find(row => {
+                    const cells = row.querySelectorAll('td');
+                    return cells[0].innerText === productName && cells[2].innerText === option;
+                });
+
+                if (existingRow) {
+                    const quantityCell = existingRow.querySelector('td:nth-child(2)');
+                    quantityCell.innerText = parseInt(quantityCell.innerText) + quantity;
                 } else {
-                    priceToggleBtn.classList.remove('promo');
-                    priceToggleBtn.classList.add('normal');
-                    priceToggleBtn.innerHTML = '<i class="fa fa-times"></i>'; // Ícone de "X"
-                }
-            });
-
-
-            addButton.addEventListener('click', (event) => {
-                event.preventDefault();
-
-                const productName = card.querySelector('h2').innerText.trim();
-                const quantity = parseInt(input.value) || 0;
-                const isPromo = priceToggleBtn.classList.contains('promo') ? 'Promocional' : 'Normal';
-
-                let option = 'Sem opção';
-                if (select) {
-                    const selectedOption = select.selectedIndex > 0 ? select.options[select.selectedIndex].text : 'Sem opção';
-                    option = selectedOption.split(' - ')[0];
-                }
-
-                if (quantity > 0) {
-                    const tableBody = document.getElementById('sales-table-body');
-
-                    const existingRow = Array.from(tableBody.querySelectorAll('tr')).find(row => {
-                        const cells = row.querySelectorAll('td');
-                        return cells[0].innerText === productName && cells[2].innerText === option;
-                    });
-
-                    if (existingRow) {
-                        const quantityCell = existingRow.querySelector('td:nth-child(2)');
-                        quantityCell.innerText = parseInt(quantityCell.innerText) + quantity;
-                    } else {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
                     <td>${productName}</td>
                     <td>${quantity}</td>
                     <td>${option}</td>
                     <td>${isPromo}</td>
                     <td><button class="remove-btn"><i class="fas fa-times"></i></button></td>
                 `;
-                        tableBody.appendChild(row);
+                    tableBody.appendChild(row);
 
-                        const removeButton = row.querySelector('.remove-btn');
-                        removeButton.addEventListener('click', () => {
-                            row.remove();
-                        });
-                    }
-                    input.value = 0;
-                } else {
-                    alert("Adicione uma quantidade maior que 0.");
+                    const removeButton = row.querySelector('.remove-btn');
+                    removeButton.addEventListener('click', () => {
+                        row.remove();
+                    });
                 }
-            });
+                input.value = 0;
+            } else {
+                alert("Adicione uma quantidade maior que 0.");
+            }
         });
+
 
         document.getElementById('confirm-sale').addEventListener('click', () => {
             const tableBody = document.getElementById('sales-table-body');
@@ -646,6 +813,10 @@ if (isset($_SESSION['permissao'])) {
 
             console.log("Query Params:", queryParams);
 
+            // Exibe o toast antes de redirecionar
+            showToast("Venda concluída com sucesso!");
+
+            // Redireciona o usuário
             window.location.href = `cadastrar.php?${queryParams}`;
         });
     </script>

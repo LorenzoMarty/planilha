@@ -48,12 +48,15 @@ if (isset($_GET['product'], $_GET['quantity'], $_GET['option'], $_GET['promo']))
 
                 if (!mysqli_query($conexao, $sql)) {
                     echo "Erro ao cadastrar venda: " . mysqli_error($conexao);
+                    exit;
                 }
             } else {
                 echo "Produto inválido: ID $productId não encontrado na tabela produto.<br>";
+                exit;
             }
         } else {
             echo "Produto ou quantidade inválidos. Produto: $product, Opção: $option.<br>";
+            exit;
         }
     }
     header("Location: vendas.php");
@@ -73,8 +76,10 @@ if (isset($_GET['product'], $_GET['quantity'], $_GET['option'], $_GET['promo']))
         } else {
             echo "<script>alert('Não foi possível realizar o cadastro!');
         location.href='index.php'</script>";
+        exit;
         }
     } else {
         echo "Erro na encriptografia da senha!!!!";
+        exit;
     }
 }

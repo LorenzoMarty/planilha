@@ -446,7 +446,6 @@ if (!isset($_SESSION['balanco_geral'])) {
                             $quantidade_desconto = $dados['quantidade_desconto'] * 500;
                             break;
                         default:
-                            // Log para tipos desconhecidos
                             break;
                     }
                 }

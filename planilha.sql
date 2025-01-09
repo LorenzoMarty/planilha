@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 09/01/2025 às 01:42
--- Versão do servidor: 8.3.0
--- Versão do PHP: 8.2.18
+-- Tempo de geração: 09-Jan-2025 às 16:31
+-- Versão do servidor: 8.0.31
+-- versão do PHP: 8.0.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `produto`
+-- Estrutura da tabela `produto`
 --
 
 DROP TABLE IF EXISTS `produto`;
@@ -33,32 +33,32 @@ CREATE TABLE IF NOT EXISTS `produto` (
   `nome` varchar(255) NOT NULL,
   `valor_custo` float NOT NULL,
   `valor_venda` float NOT NULL,
+  `valor_desconto` int NOT NULL,
   `qntdC` int NOT NULL,
   `ponto_equilibrio` time DEFAULT NULL,
-  `valor_desconto` int NOT NULL,
   PRIMARY KEY (`id_produto`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Despejando dados para a tabela `produto`
+-- Extraindo dados da tabela `produto`
 --
 
-INSERT INTO `produto` (`id_produto`, `nome`, `valor_custo`, `valor_venda`, `qntdC`, `ponto_equilibrio`, `valor_desconto`) VALUES
-(1, 'Batata Frita Pequena', 0, 3, 80, NULL, 2),
-(2, 'Batata Frita Grande', 0, 7, 80, NULL, 5),
-(3, 'Sacolé Fruta', 1, 2, 100, NULL, 1),
-(4, 'Sacolé Cremoso', 2, 5, 100, NULL, 3),
-(5, 'Cachorro Quente', 3, 5, 30, NULL, 4),
-(6, 'Hamburguer', 3, 6, 30, NULL, 4),
-(7, 'Pastel', 2.5, 4, 30, NULL, 3),
-(8, 'Refri', 2.69, 4, 60, NULL, 3),
-(9, 'Enroladinho', 2, 3, 30, NULL, 2),
-(10, 'Bolo de pote', 4, 5, 30, NULL, 4);
+INSERT INTO `produto` (`id_produto`, `nome`, `valor_custo`, `valor_venda`, `valor_desconto`, `qntdC`, `ponto_equilibrio`) VALUES
+(1, 'Batata Frita Pequena', 0, 3, 2, 80, '10:37:30'),
+(2, 'Batata Frita Grande', 0, 7, 5, 80, '10:37:30'),
+(3, 'Sacolé Fruta', 1, 2, 1, 100, NULL),
+(4, 'Sacolé Cremoso', 2, 5, 3, 100, NULL),
+(5, 'Cachorro Quente', 3, 5, 4, 30, '11:44:23'),
+(6, 'Hamburguer', 3, 6, 4, 30, NULL),
+(7, 'Pastel', 2.5, 4, 3, 30, NULL),
+(8, 'Refri', 2.69, 4, 3, 60, '13:26:35'),
+(9, 'Enroladinho', 2, 3, 2, 30, NULL),
+(10, 'Bolo de pote', 4, 5, 4, 30, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `usuario`
+-- Estrutura da tabela `usuario`
 --
 
 DROP TABLE IF EXISTS `usuario`;
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Despejando dados para a tabela `usuario`
+-- Extraindo dados da tabela `usuario`
 --
 
 INSERT INTO `usuario` (`nome`, `email`, `senha`, `id_usuario`, `perm`) VALUES
@@ -83,26 +83,26 @@ INSERT INTO `usuario` (`nome`, `email`, `senha`, `id_usuario`, `perm`) VALUES
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `vendas`
+-- Estrutura da tabela `vendas`
 --
 
 DROP TABLE IF EXISTS `vendas`;
 CREATE TABLE IF NOT EXISTS `vendas` (
   `id_venda` int NOT NULL AUTO_INCREMENT,
   `id_produto` int NOT NULL,
-  `qtd` int NOT NULL,
-  `qntd_desconto` int NOT NULL,
-  `tipo` varchar(20) NOT NULL,
+  `qtd` int DEFAULT NULL,
+  `qntd_desconto` int DEFAULT NULL,
+  `tipo` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   PRIMARY KEY (`id_venda`),
   KEY `id_produto` (`id_produto`)
-) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Restrições para tabelas despejadas
+-- Restrições para despejos de tabelas
 --
 
 --
--- Restrições para tabelas `vendas`
+-- Limitadores para a tabela `vendas`
 --
 ALTER TABLE `vendas`
   ADD CONSTRAINT `produto_venda` FOREIGN KEY (`id_produto`) REFERENCES `produto` (`id_produto`) ON DELETE CASCADE ON UPDATE CASCADE;
