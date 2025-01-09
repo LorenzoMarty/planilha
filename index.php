@@ -17,7 +17,7 @@ if (isset($_POST['login'])) {
             $_SESSION['senha'] = $senha;
             $_SESSION['permissao'] = $dados['perm'];
             $_SESSION['id'] = $dados['idusuario'];
-            header("Location: main.php");
+            header("Location: vendas.php");
         }
     } else {
         echo "<script>alert('Usuário e/ou senha incorreto(s)');</script>";
@@ -26,7 +26,7 @@ if (isset($_POST['login'])) {
 
 if (isset($_SESSION['permissao'])) {
     if ($_SESSION['permissao'] == 1) {
-        header('Location: main.php');
+        header('Location: vendas.php');
     }
 }
 ?>
@@ -37,8 +37,8 @@ if (isset($_SESSION['permissao'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dia Geek</title>
-    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="img/icon.png" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -138,7 +138,6 @@ if (isset($_SESSION['permissao'])) {
             font-size: 16px;
             cursor: pointer;
             margin-top: 10px;
-            font-weight: bold;
         }
 
         .login-button:hover {
@@ -152,7 +151,6 @@ if (isset($_SESSION['permissao'])) {
         .center a {
             color: #640d14;
             text-decoration: none;
-            font-weight: bold;
         }
 
         .center a:hover {

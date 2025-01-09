@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 08/01/2025 às 08:53
+-- Tempo de geração: 09/01/2025 às 01:42
 -- Versão do servidor: 8.3.0
 -- Versão do PHP: 8.2.18
 
@@ -35,20 +35,25 @@ CREATE TABLE IF NOT EXISTS `produto` (
   `valor_venda` float NOT NULL,
   `qntdC` int NOT NULL,
   `ponto_equilibrio` time DEFAULT NULL,
+  `valor_desconto` int NOT NULL,
   PRIMARY KEY (`id_produto`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `produto`
 --
 
-INSERT INTO `produto` (`id_produto`, `nome`, `valor_custo`, `valor_venda`, `qntdC`, `ponto_equilibrio`) VALUES
-(1, 'Batata Frita Pequena', 0, 0, 0, NULL),
-(2, 'Batata Frita Grande', 0, 0, 0, NULL),
-(3, 'Sacolé Fruta', 0, 0, 0, NULL),
-(4, 'Sacolé Cremoso', 0, 0, 0, NULL),
-(5, 'Cachorro Quente', 0, 0, 0, NULL),
-(6, 'Hamburguer', 0, 0, 0, NULL);
+INSERT INTO `produto` (`id_produto`, `nome`, `valor_custo`, `valor_venda`, `qntdC`, `ponto_equilibrio`, `valor_desconto`) VALUES
+(1, 'Batata Frita Pequena', 0, 3, 80, NULL, 2),
+(2, 'Batata Frita Grande', 0, 7, 80, NULL, 5),
+(3, 'Sacolé Fruta', 1, 2, 100, NULL, 1),
+(4, 'Sacolé Cremoso', 2, 5, 100, NULL, 3),
+(5, 'Cachorro Quente', 3, 5, 30, NULL, 4),
+(6, 'Hamburguer', 3, 6, 30, NULL, 4),
+(7, 'Pastel', 2.5, 4, 30, NULL, 3),
+(8, 'Refri', 2.69, 4, 60, NULL, 3),
+(9, 'Enroladinho', 2, 3, 30, NULL, 2),
+(10, 'Bolo de pote', 4, 5, 30, NULL, 4);
 
 -- --------------------------------------------------------
 
@@ -86,9 +91,11 @@ CREATE TABLE IF NOT EXISTS `vendas` (
   `id_venda` int NOT NULL AUTO_INCREMENT,
   `id_produto` int NOT NULL,
   `qtd` int NOT NULL,
+  `qntd_desconto` int NOT NULL,
+  `tipo` varchar(20) NOT NULL,
   PRIMARY KEY (`id_venda`),
   KEY `id_produto` (`id_produto`)
-) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Restrições para tabelas despejadas
