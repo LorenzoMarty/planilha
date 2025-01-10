@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 include "conexao.php";
 $conexao = conectar();
@@ -59,6 +60,7 @@ if (isset($_GET['product'], $_GET['quantity'], $_GET['option'], $_GET['promo']))
             exit;
         }
     }
+    $_SESSION['confirm'] = "Venda concluída com sucesso!";
     header("Location: vendas.php");
     exit;
 } elseif (isset($_POST['cadastrarUsuario'])) {

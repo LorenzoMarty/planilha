@@ -2,12 +2,15 @@
 session_start();
 if (isset($_SESSION['permissao'])) {
     if ($_SESSION['permissao'] == 1) {
-        // Permissão concedida
     } else {
         header('Location: sair.php');
     }
 }
-
+$confirm = "";
+if (isset($_SESSION['confirm'])) {
+    $confirm = $_SESSION['confirm'];
+    unset($_SESSION['confirm']);
+}
 require "conexao.php";
 $conexao = conectar();
 
@@ -458,28 +461,27 @@ foreach ($queries as $sql) {
             text-decoration: underline;
         }
 
-        .toast {
+        #toast {
             visibility: hidden;
             min-width: 250px;
             margin-left: -125px;
-            background-color: #28a745;
+            background-color: #333;
             color: #fff;
             text-align: center;
-            border-radius: 2px;
+            border-radius: 5px;
             padding: 16px;
             position: fixed;
-            z-index: 9999;
+            z-index: 1;
             left: 50%;
             bottom: 30px;
             font-size: 17px;
+            transition: visibility 0.5s, opacity 0.5s;
             opacity: 0;
-            transition: opacity 0.5s, visibility 0s 0.5s;
         }
 
-        .toast.show {
+        #toast.show {
             visibility: visible;
             opacity: 1;
-            transition: opacity 0.5s;
         }
     </style>
 </head>
@@ -499,7 +501,7 @@ foreach ($queries as $sql) {
     </nav>
 
     <!-- Toast de Venda Concluída -->
-    <div id="toast" class="toast">Venda concluída com sucesso!</div>
+    <div id="toast" class="toast"></div>
 
 
     <div class="container">
@@ -542,10 +544,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- Cachorro Quente -->
-        <div class="card">
+        <div class="card" id="cachorro">
             <img src="img/cachorro.jpg" alt="Cachorro quente">
             <h2>Cachorro Quente</h2>
-            <p>R$ <?= number_format($cachorro_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($cachorro_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -556,10 +558,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- Hambúrguer -->
-        <div class="card">
+        <div class="card" id="hamburguer">
             <img src="img/hamburguer.jpg" alt="Hambúrguer">
             <h2>Hambúrguer</h2>
-            <p>R$ <?= number_format($hamburguer_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($hamburguer_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -570,10 +572,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- Pastel -->
-        <div class="card">
+        <div class="card" id="pastel">
             <img src="img/pastel.jpg" alt="pastel">
             <h2>Pastel</h2>
-            <p>R$ <?= number_format($pastel_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($pastel_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -584,10 +586,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- Enroladinho -->
-        <div class="card">
+        <div class="card" id="enroladinho">
             <img src="img/enroladinho.jpg" alt="enroladinho">
             <h2>Enroladinho</h2>
-            <p>R$ <?= number_format($enroladinho_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($enroladinho_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -598,10 +600,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- refri -->
-        <div class="card">
+        <div class="card" id="refri">
             <img src="img/refri.webp" alt="refri">
             <h2>Refri</h2>
-            <p>R$ <?= number_format($refri_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($refri_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -612,10 +614,10 @@ foreach ($queries as $sql) {
         </div>
 
         <!-- bolo de pote -->
-        <div class="card">
+        <div class="card" id="bolodepote">
             <img src="img/bolodepote.jpeg" alt="refri">
             <h2>Bolo de pote</h2>
-            <p>R$ <?= number_format($bolo_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($bolo_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -660,15 +662,6 @@ foreach ($queries as $sql) {
         }
     </script>
     <script>
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
         document.querySelectorAll('.card').forEach(card => {
             const input = card.querySelector('input');
             const minusButton = card.querySelector('.minus');
@@ -678,6 +671,7 @@ foreach ($queries as $sql) {
             const priceToggleBtn = card.querySelector('.price-toggle-btn');
             const priceElement = card.querySelector('.price');
 
+            // Função para atualizar o preço
             const updatePrice = () => {
                 const selectedOption = select ? select.value : null;
                 let priceNormal, pricePromo;
@@ -699,8 +693,24 @@ foreach ($queries as $sql) {
                         priceNormal = <?= $sacolec_venda ?>;
                         pricePromo = <?= $sacolec_desconto ?>;
                     }
-                } else {
-                    // Adicione outras condições para outros produtos aqui
+                } else if (card.id === 'cachorro') {
+                    priceNormal = <?= $cachorro_venda ?>;
+                    pricePromo = <?= $cachorro_desconto ?>;
+                } else if (card.id === 'hamburguer') {
+                    priceNormal = <?= $hamburguer_venda ?>;
+                    pricePromo = <?= $hamburguer_desconto ?>;
+                } else if (card.id === 'pastel') {
+                    priceNormal = <?= $pastel_venda ?>;
+                    pricePromo = <?= $pastel_desconto ?>;
+                } else if (card.id === 'enroladinho') {
+                    priceNormal = <?= $enroladinho_venda ?>;
+                    pricePromo = <?= $enroladinho_desconto ?>;
+                } else if (card.id === 'refri') {
+                    priceNormal = <?= $refri_venda ?>;
+                    pricePromo = <?= $refri_desconto ?>;
+                } else if (card.id === 'bolodepote') {
+                    priceNormal = <?= $bolo_venda ?>;
+                    pricePromo = <?= $bolo_desconto ?>;
                 }
 
                 // Atualiza o preço automaticamente com base na seleção
@@ -711,10 +721,12 @@ foreach ($queries as $sql) {
                 }
             };
 
+            // Event listener para seleção de opção
             if (select) {
                 select.addEventListener('change', updatePrice);
             }
 
+            // Event listener para alternar preço
             priceToggleBtn.addEventListener('click', () => {
                 if (priceToggleBtn.classList.contains('normal')) {
                     priceToggleBtn.classList.remove('normal');
@@ -728,6 +740,7 @@ foreach ($queries as $sql) {
                 updatePrice();
             });
 
+            // Event listeners para incrementar e decrementar quantidade
             minusButton.addEventListener('click', () => {
                 const currentValue = parseInt(input.value) || 0;
                 if (currentValue > 0) {
@@ -739,53 +752,55 @@ foreach ($queries as $sql) {
                 const currentValue = parseInt(input.value) || 0;
                 input.value = currentValue + 1;
             });
-        });
 
-        addButton.addEventListener('click', (event) => {
-            event.preventDefault();
+            // Event listener para adicionar item à tabela de vendas
+            addButton.addEventListener('click', (event) => {
+                event.preventDefault();
 
-            const productName = card.querySelector('h2').innerText.trim();
-            const quantity = parseInt(input.value) || 0;
-            const isPromo = priceToggleBtn.classList.contains('promo') ? 'Promocional' : 'Normal';
+                const productName = card.querySelector('h2').innerText.trim();
+                const quantity = parseInt(input.value) || 0;
+                const isPromo = priceToggleBtn.classList.contains('promo') ? 'Promocional' : 'Normal';
 
-            let option = 'Sem opção';
-            if (select) {
-                const selectedOption = select.selectedIndex > 0 ? select.options[select.selectedIndex].text : 'Sem opção';
-                option = selectedOption.split(' - ')[0];
-            }
-
-            if (quantity > 0) {
-                const tableBody = document.getElementById('sales-table-body');
-
-                const existingRow = Array.from(tableBody.querySelectorAll('tr')).find(row => {
-                    const cells = row.querySelectorAll('td');
-                    return cells[0].innerText === productName && cells[2].innerText === option;
-                });
-
-                if (existingRow) {
-                    const quantityCell = existingRow.querySelector('td:nth-child(2)');
-                    quantityCell.innerText = parseInt(quantityCell.innerText) + quantity;
-                } else {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${productName}</td>
-                    <td>${quantity}</td>
-                    <td>${option}</td>
-                    <td>${isPromo}</td>
-                    <td><button class="remove-btn"><i class="fas fa-times"></i></button></td>
-                `;
-                    tableBody.appendChild(row);
-
-                    const removeButton = row.querySelector('.remove-btn');
-                    removeButton.addEventListener('click', () => {
-                        row.remove();
-                    });
+                let option = 'Sem opção';
+                if (select) {
+                    const selectedOption = select.selectedIndex > 0 ? select.options[select.selectedIndex].text : 'Sem opção';
+                    option = selectedOption.split(' - ')[0];
                 }
-                input.value = 0;
-            } else {
-                alert("Adicione uma quantidade maior que 0.");
-            }
+
+                if (quantity > 0) {
+                    const tableBody = document.getElementById('sales-table-body');
+
+                    const existingRow = Array.from(tableBody.querySelectorAll('tr')).find(row => {
+                        const cells = row.querySelectorAll('td');
+                        return cells[0].innerText === productName && cells[2].innerText === option;
+                    });
+
+                    if (existingRow) {
+                        const quantityCell = existingRow.querySelector('td:nth-child(2)');
+                        quantityCell.innerText = parseInt(quantityCell.innerText) + quantity;
+                    } else {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                <td>${productName}</td>
+                <td>${quantity}</td>
+                <td>${option}</td>
+                <td>${isPromo}</td>
+                <td><button class="remove-btn"><i class="fas fa-times"></i></button></td>
+            `;
+                        tableBody.appendChild(row);
+
+                        const removeButton = row.querySelector('.remove-btn');
+                        removeButton.addEventListener('click', () => {
+                            row.remove();
+                        });
+                    }
+                    input.value = 0;
+                } else {
+                    alert("Adicione uma quantidade maior que 0.");
+                }
+            });
         });
+
 
 
         document.getElementById('confirm-sale').addEventListener('click', () => {
@@ -813,12 +828,30 @@ foreach ($queries as $sql) {
 
             console.log("Query Params:", queryParams);
 
-            // Exibe o toast antes de redirecionar
-            showToast("Venda concluída com sucesso!");
-
-            // Redireciona o usuário
             window.location.href = `cadastrar.php?${queryParams}`;
         });
+    </script>
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            if (!toast) {
+                console.error("Elemento #toast não encontrado.");
+                return;
+            }
+
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        <?php if (!empty($confirm)) { ?>
+            window.addEventListener("load", () => {
+                showToast(<?= json_encode($confirm) ?>);
+            });
+        <?php } ?>
     </script>
 
 </body>
