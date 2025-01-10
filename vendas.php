@@ -762,9 +762,17 @@ foreach ($queries as $sql) {
                 const isPromo = priceToggleBtn.classList.contains('promo') ? 'Promocional' : 'Normal';
 
                 let option = 'Sem opção';
+
+                // Verifique se o produto usa um select antes de verificar a opção
                 if (select) {
                     const selectedOption = select.selectedIndex > 0 ? select.options[select.selectedIndex].text : 'Sem opção';
                     option = selectedOption.split(' - ')[0];
+
+                    // Se a opção for "Sem opção", exibe o toast e interrompe a execução
+                    if (option === 'Sem opção') {
+                        showToast("Escolha uma opção para o produto.");
+                        return; // Não adicionar à tabela
+                    }
                 }
 
                 if (quantity > 0) {
@@ -796,7 +804,7 @@ foreach ($queries as $sql) {
                     }
                     input.value = 0;
                 } else {
-                    alert("Adicione uma quantidade maior que 0.");
+                    showToast("Adicione uma quantidade maior que 0.");
                 }
             });
         });
