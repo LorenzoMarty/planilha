@@ -290,7 +290,7 @@ if (!isset($_SESSION['balanco_geral'])) {
     </nav>
 
     <div class="total-arrecadado">Total Arrecadado:
-        <?php echo number_format($_SESSION['balanco_geral'], 2, ',', '.'); ?>
+        <?= number_format($_SESSION['balanco_geral'], 2, ',', '.'); ?>
     </div>
     <?php
     require_once 'conexao.php';
