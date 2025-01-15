@@ -504,6 +504,25 @@ foreach ($queries as $sql) {
     <div id="toast" class="toast"></div>
 
 
+    <!-- Lista de vendas -->
+    <div class="sales-list">
+        <h2>Lista de Vendas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Opção</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+            <tbody id="sales-table-body">
+                <!-- Itens adicionados aparecerão aqui -->
+            </tbody>
+        </table>
+        <a href="#" class="confirm-btn" id="confirm-sale">Confirmar Venda</a>
+    </div>
+    
     <div class="container">
         <!-- Batata Frita -->
         <div class="card" id="batata">
@@ -628,25 +647,6 @@ foreach ($queries as $sql) {
         </div>
     </div>
 
-
-    <!-- Lista de vendas -->
-    <div class="sales-list">
-        <h2>Lista de Vendas</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Produto</th>
-                    <th>Quantidade</th>
-                    <th>Opção</th>
-                    <th>Tipo</th>
-                </tr>
-            </thead>
-            <tbody id="sales-table-body">
-                <!-- Itens adicionados aparecerão aqui -->
-            </tbody>
-        </table>
-        <a href="#" class="confirm-btn" id="confirm-sale">Confirmar Venda</a>
-    </div>
 
     <!-- Footer -->
     <footer>
