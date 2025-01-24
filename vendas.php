@@ -15,8 +15,6 @@ require "conexao.php";
 $conexao = conectar();
 
 // Variáveis para os valores de venda e desconto de cada produto
-$batatap_venda = $batata_desconto = 0;
-$batatag_venda = $batata_desconto = 0;
 $sacolef_venda = $sacole_desconto = 0;
 $sacolec_venda = $sacole_desconto = 0;
 $cachorro_venda = $cachorro_desconto = 0;
@@ -28,7 +26,6 @@ $bolo_venda = $bolo_desconto = 0;
 
 // Consultas para cada grupo de produtos
 $queries = [
-    "SELECT * FROM produto WHERE id_produto = 1 or 2", // Batata
     "SELECT * FROM produto WHERE id_produto = 3 or 4", // Sacolé
     "SELECT * FROM produto WHERE id_produto = 5", // Cachorro Quente
     "SELECT * FROM produto WHERE id_produto = 6", // Hambúrguer
@@ -46,14 +43,6 @@ foreach ($queries as $sql) {
         while ($dados = mysqli_fetch_array($resultado)) {
             // Associa os valores às variáveis correspondentes com base no id_produto
             switch ($dados['id_produto']) {
-                case 1: // Batata Pequena
-                    $batatap_venda = $dados['valor_venda'];
-                    $batatap_desconto = $dados['valor_desconto'];
-                    break;
-                case 2: // Batata Grande
-                    $batatag_venda = $dados['valor_venda'];
-                    $batatag_desconto = $dados['valor_desconto'];
-                    break;
                 case 3: // Sacolé Fruta
                     $sacolef_venda = $dados['valor_venda'];
                     $sacolef_desconto = $dados['valor_desconto'];
@@ -522,27 +511,8 @@ foreach ($queries as $sql) {
         </table>
         <a href="#" class="confirm-btn" id="confirm-sale">Confirmar Venda</a>
     </div>
-    
-    <div class="container">
-        <!-- Batata Frita -->
-        <div class="card" id="batata">
-            <img src="img/batata.jpg" alt="Batata Frita">
-            <h2>Batata Frita</h2>
-            <p class="price">R$ <?= number_format($batatap_venda, 2, ',', '.') ?></p>
-            <select id="batata-size">
-                <option value="" disabled selected>Selecione um tamanho</option> <!-- Label não selecionável -->
-                <option value="batata pequena">Pequena</option>
-                <option value="batata grande">Grande</option>
-            </select>
-            <div class="controls">
-                <button class="btn minus">-</button>
-                <input type="number" value="0" min="0" readonly>
-                <button class="btn plus">+</button>
-            </div>
-            <a href="#" class="add-btn">Adicionar</a>
-            <button class="price-toggle-btn normal"><i class="fa fa-times"></i></button>
-        </div>
 
+    <div class="container">
         <!-- Sacolé -->
         <div class="card" id="sacole">
             <img src="img/sacole.jpg" alt="Sacolé">
@@ -677,15 +647,7 @@ foreach ($queries as $sql) {
                 let priceNormal, pricePromo;
 
                 // Determina os preços com base no produto
-                if (card.id === 'batata') {
-                    if (selectedOption === 'batata pequena') {
-                        priceNormal = <?= $batatap_venda ?>;
-                        pricePromo = <?= $batatap_desconto ?>;
-                    } else if (selectedOption === 'batata grande') {
-                        priceNormal = <?= $batatag_venda ?>;
-                        pricePromo = <?= $batatag_desconto ?>;
-                    }
-                } else if (card.id === 'sacole') {
+                if (card.id === 'sacole') {
                     if (selectedOption === 'sacole fruta') {
                         priceNormal = <?= $sacolef_venda ?>;
                         pricePromo = <?= $sacolef_desconto ?>;

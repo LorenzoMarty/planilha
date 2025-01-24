@@ -309,22 +309,6 @@ if (!isset($_SESSION['balanco_geral'])) {
             SUM(vendas.qntd_desconto) AS quantidade_desconto
         FROM produto 
         INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 1 OR produto.id_produto = 2 
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            vendas.tipo,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
         WHERE produto.id_produto = 3 OR produto.id_produto = 4 
         GROUP BY produto.id_produto;",
 
@@ -420,7 +404,7 @@ if (!isset($_SESSION['balanco_geral'])) {
     ];
 
     $balanco_geral = 0; // Variável global para armazenar o total arrecadado
-    
+
     function exibirTabela($conexao, $sql, $titulo, $isKg)
     {
         global $balanco_geral; // Tornar a variável global acessível
@@ -480,24 +464,7 @@ if (!isset($_SESSION['balanco_geral'])) {
         echo "<caption>" . $titulo . "</caption>";
 
         // Ajusta o cabeçalho de acordo com o título
-        if ($titulo === "Batata Frita") {
-            echo "<thead>
-            <tr>
-                <th>Tamanho</th>
-                <th>Custo</th>
-                <th>Venda</th>
-                <th>Desconto</th>
-                <th>Qnt Comprada</th>
-                <th>Qnt Vendida</th>
-                <th>Qnt Desconto</th>
-                <th>Nº Vendido</th>
-                <th>Nº Desconto</th>
-                <th>Balanço</th>
-                <th>Balanço Total</th>
-                <th>P.E</th>
-            </tr>
-        </thead>";
-        } elseif ($titulo === "Sacolé") {
+        if ($titulo === "Sacolé") {
             echo "<thead>
             <tr>
                 <th>Tipo</th>
@@ -530,7 +497,7 @@ if (!isset($_SESSION['balanco_geral'])) {
 
         foreach ($dados_produtos as $dados) {
             echo "<tr>";
-            if ($titulo === "Batata Frita" || $titulo === "Sacolé") {
+            if ($titulo === "Sacolé") {
                 echo "<td>" . $dados['tipo'] . "</td>";
             }
             echo "<td>" . $dados['valor_custo'] . ",00 </td>";
@@ -538,17 +505,10 @@ if (!isset($_SESSION['balanco_geral'])) {
             echo "<td>" . $dados['valor_desconto'] . ",00 </td>";
 
             // Ajusta os dados de acordo com o título
-            if ($titulo === "Batata Frita") {
-                echo "<td>" . $dados['qntdC'] . " kg </td>";
-                echo "<td>" . $dados['quantidade_vendida_calculada'] . " g </td>";
-                echo "<td>" . $dados['quantidade_desconto_calculada'] . " g </td>";
-                echo "<td>" . $dados['quantidade_vendida'] . " </td>";
-                echo "<td>" . $dados['quantidade_desconto'] . " </td>";
-            } else {
-                echo "<td>" . $dados['qntdC'] . " </td>";
-                echo "<td>" . $dados['quantidade_vendida'] . " </td>";
-                echo "<td>" . $dados['quantidade_desconto'] . " </td>";
-            }
+            echo "<td>" . $dados['qntdC'] . " </td>";
+            echo "<td>" . $dados['quantidade_vendida'] . " </td>";
+            echo "<td>" . $dados['quantidade_desconto'] . " </td>";
+
 
             echo "<td>" . $dados['balanco_calculado'] . ",00 </td>";
             echo "<td>" . $balanco_total . ",00 </td>";
@@ -560,14 +520,13 @@ if (!isset($_SESSION['balanco_geral'])) {
     }
 
     $conexao = conectar();
-    exibirTabela($conexao, $queries[0], "Batata Frita", true);
-    exibirTabela($conexao, $queries[1], "Sacolé", false);
-    exibirTabela($conexao, $queries[2], "Cachorro Quente", false);
-    exibirTabela($conexao, $queries[3], "Hambúrguer", false);
-    exibirTabela($conexao, $queries[4], "Pastel", false);
-    exibirTabela($conexao, $queries[5], "Refri", false);
-    exibirTabela($conexao, $queries[6], "Enroladinho", false);
-    exibirTabela($conexao, $queries[7], "Bolo de pote", false);
+    exibirTabela($conexao, $queries[0], "Sacolé", false);
+    exibirTabela($conexao, $queries[1], "Cachorro Quente", false);
+    exibirTabela($conexao, $queries[2], "Hambúrguer", false);
+    exibirTabela($conexao, $queries[3], "Pastel", false);
+    exibirTabela($conexao, $queries[4], "Refri", false);
+    exibirTabela($conexao, $queries[5], "Enroladinho", false);
+    exibirTabela($conexao, $queries[6], "Bolo de pote", false);
 
     ?>
 

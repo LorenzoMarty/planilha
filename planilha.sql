@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 09-Jan-2025 às 16:31
+-- Tempo de geração: 24-Jan-2025 às 12:46
 -- Versão do servidor: 8.0.31
 -- versão do PHP: 8.0.26
 
@@ -44,16 +44,16 @@ CREATE TABLE IF NOT EXISTS `produto` (
 --
 
 INSERT INTO `produto` (`id_produto`, `nome`, `valor_custo`, `valor_venda`, `valor_desconto`, `qntdC`, `ponto_equilibrio`) VALUES
-(1, 'Batata Frita Pequena', 0, 3, 2, 80, '10:37:30'),
-(2, 'Batata Frita Grande', 0, 7, 5, 80, '10:37:30'),
-(3, 'Sacolé Fruta', 1, 2, 1, 100, NULL),
-(4, 'Sacolé Cremoso', 2, 5, 3, 100, NULL),
-(5, 'Cachorro Quente', 3, 5, 4, 30, '11:44:23'),
-(6, 'Hamburguer', 3, 6, 4, 30, NULL),
-(7, 'Pastel', 2.5, 4, 3, 30, NULL),
-(8, 'Refri', 2.69, 4, 3, 60, '13:26:35'),
-(9, 'Enroladinho', 2, 3, 2, 30, NULL),
-(10, 'Bolo de pote', 4, 5, 4, 30, NULL);
+(1, 'Batata Frita Pequena', 0, 3, 2, 80, NULL),
+(2, 'Batata Frita Grande', 0, 7, 5, 80, NULL),
+(3, 'Sacolé Fruta', 1, 2, 1, 120, NULL),
+(4, 'Sacolé Cremoso', 2, 3, 2, 120, NULL),
+(5, 'Cachorro Quente', 3.5, 5, 4, 60, NULL),
+(6, 'Hamburguer', 4, 6, 5, 60, NULL),
+(7, 'Pastel', 3.5, 5, 4, 60, NULL),
+(8, 'Refri', 2.89, 5, 4, 60, NULL),
+(9, 'Enroladinho', 2.5, 4, 3, 50, NULL),
+(10, 'Bolo de pote', 4, 7, 5, 30, NULL);
 
 -- --------------------------------------------------------
 
