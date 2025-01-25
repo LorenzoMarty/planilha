@@ -11,14 +11,14 @@ if (isset($_GET['product'], $_GET['quantity'], $_GET['option'], $_GET['promo']))
     $promos = $_GET['promo']; // Promoção (normal ou promocional)
 
     $productMap = [
-        'Batata Frita' => ['Pequena' => 1, 'Grande' => 2],
         'Sacolé' => ['Fruta' => 3, 'Cremoso' => 4],
         'Cachorro Quente' => 5,
         'Hambúrguer' => 6,
         'Pastel' => 7,
-        'Refri' => 8,
+        'Refri' => ['Coca Cola' => 8, 'Pepsi' => 1, 'Guaraná' => 2, 'Coca Zero' => 11],
         'Enroladinho' => 9,
-        'Bolo de pote' => 10
+        'Bolo de pote' => 10,
+        'Pipoca' => 13
     ];
 
     foreach ($products as $index => $product) {

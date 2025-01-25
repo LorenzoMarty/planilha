@@ -273,9 +273,38 @@ if (!isset($_SESSION['balanco_geral'])) {
             max-width: 800px;
         }
     </style>
+    <script>
+        // Função para atualizar o valor do total arrecadado
+        function atualizarTotalArrecadado() {
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "atualizar_total.php", true); // Faz requisição ao arquivo PHP
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Atualiza o valor do total arrecadado na página
+                    const totalArrecadadoDiv = document.getElementById('total-arrecadado');
+                    totalArrecadadoDiv.innerHTML = xhr.responseText; // Certifique-se de que o PHP retorna HTML adequado
+                } else {
+                    console.error("Erro na resposta do servidor: ", xhr.status);
+                }
+            };
+            xhr.onerror = function () {
+                console.error("Erro ao tentar conectar ao servidor.");
+            };
+            xhr.send();
+        }
+
+        // Configura a atualização ao carregar e periodicamente
+        window.onload = function () {
+            atualizarTotalArrecadado(); // Atualiza ao carregar a página
+            setInterval(atualizarTotalArrecadado, 5000); // Atualiza a cada 5 segundos
+        };
+    </script>
+
+
 </head>
 
 <body>
+
     <nav class="navbar">
         <div class="menu-icon" onclick="toggleMenu()">
             <span></span>
@@ -289,183 +318,30 @@ if (!isset($_SESSION['balanco_geral'])) {
         </div>
     </nav>
 
-    <div class="total-arrecadado">Total Arrecadado:
-        <?= number_format($_SESSION['balanco_geral'], 2, ',', '.'); ?>
+    <div class="total-arrecadado" id="total-arrecadado">
+        <p>Total Arrecadado: <?= number_format($_SESSION['balanco_geral'], 2, ',', '.'); ?></p>
+        <p>Ponto de Equilíbrio Total: <?= ($_SESSION['balanco_geral'] >= 0) ? 'Alcançado' : 'Não Alcançado'; ?></p>
     </div>
     <?php
     require_once 'conexao.php';
 
     $queries = [
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            vendas.tipo,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 3 OR produto.id_produto = 4 
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 5 
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 6 
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 7
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 8
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 9
-        GROUP BY produto.id_produto;",
-
-        "SELECT 
-            produto.id_produto,
-            produto.nome,
-            produto.valor_custo,
-            produto.valor_venda,
-            produto.valor_desconto,
-            produto.qntdC,
-            produto.ponto_equilibrio,
-            SUM(vendas.qtd) AS quantidade_vendida,
-            SUM(vendas.qntd_desconto) AS quantidade_desconto
-        FROM produto 
-        INNER JOIN vendas ON produto.id_produto = vendas.id_produto 
-        WHERE produto.id_produto = 10
-        GROUP BY produto.id_produto;"
+        ["Sacolé", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, vendas.tipo, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto IN (3, 4) GROUP BY produto.id_produto;"],
+        ["Cachorro Quente", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 5 GROUP BY produto.id_produto;"],
+        ["Hambúrguer", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 6 GROUP BY produto.id_produto;"],
+        ["Pastel", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 7 GROUP BY produto.id_produto;"],
+        ["Refri", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, vendas.tipo, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto IN (1, 2, 8, 11) GROUP BY produto.id_produto;"],
+        ["Enroladinho", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 9 GROUP BY produto.id_produto;"],
+        ["Bolo de pote", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 10 GROUP BY produto.id_produto;"],
+        ["Pipoca", "SELECT produto.id_produto, produto.nome, produto.valor_custo, produto.valor_venda, produto.valor_desconto, produto.qntdC, produto.ponto_equilibrio, COALESCE(SUM(vendas.qtd), 0) AS quantidade_vendida, COALESCE(SUM(vendas.qntd_desconto), 0) AS quantidade_desconto FROM produto LEFT JOIN vendas ON produto.id_produto = vendas.id_produto WHERE produto.id_produto = 13 GROUP BY produto.id_produto;"]
     ];
 
-    $balanco_geral = 0; // Variável global para armazenar o total arrecadado
-
-    function exibirTabela($conexao, $sql, $titulo, $isKg)
+    $balanco_geral = 0; // Variável global para armazenar o balanço total
+    
+    function renderizarCabecalho($titulo)
     {
-        global $balanco_geral; // Tornar a variável global acessível
-        $resultado = mysqli_query($conexao, $sql);
-
-        $balanco_total = 0;
-        $dados_produtos = [];
-
-        while ($dados = mysqli_fetch_array($resultado)) {
-            // Inicializa as variáveis de quantidade vendida e desconto
-            $quantidade_vendida = $dados['quantidade_vendida'];
-            $quantidade_desconto = $dados['quantidade_desconto'];
-
-            if ($titulo === "Batata Frita") {
-                if (isset($dados['tipo'])) {
-                    switch ($dados['tipo']) {
-                        case "Pequena":
-                            $quantidade_vendida = $dados['quantidade_vendida'] * 200;
-                            $quantidade_desconto = $dados['quantidade_desconto'] * 200;
-                            break;
-                        case "Grande":
-                            $quantidade_vendida = $dados['quantidade_vendida'] * 500;
-                            $quantidade_desconto = $dados['quantidade_desconto'] * 500;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            // Calcula o balanço
-            $balanco = ($dados['quantidade_vendida'] * $dados['valor_venda']) + ($dados['quantidade_desconto'] * $dados['valor_desconto']) - ($dados['qntdC'] * $dados['valor_custo']);
-            $balanco_total += $balanco;
-
-            // Atualiza o ponto de equilíbrio
-            if ($balanco >= 0 && empty($dados['ponto_equilibrio'])) {
-                date_default_timezone_set('America/Sao_Paulo');
-                $horaPe = date('H:i:s');
-                $pe = "UPDATE produto SET ponto_equilibrio = '$horaPe' WHERE id_produto = " . $dados['id_produto'];
-                mysqli_query($conexao, $pe);
-                $dados['ponto_equilibrio'] = $horaPe;
-            }
-
-            // Adiciona os cálculos ao array de dados
-            $dados['quantidade_vendida_calculada'] = $quantidade_vendida;
-            $dados['quantidade_desconto_calculada'] = $quantidade_desconto;
-            $dados['balanco_calculado'] = $balanco;
-
-            $dados_produtos[] = $dados;
-        }
-
-        $balanco_geral += $balanco_total;
-        $_SESSION['balanco_geral'] = $balanco_geral;
-
-        echo "<div class='table-container'>";
-        echo "<table class='planilha'>";
-        echo "<caption>" . $titulo . "</caption>";
-
-        // Ajusta o cabeçalho de acordo com o título
-        if ($titulo === "Sacolé") {
-            echo "<thead>
+        if ($titulo === "Sacolé" || $titulo === "Refri") {
+            return "<thead>
             <tr>
                 <th>Tipo</th>
                 <th>Custo</th>
@@ -479,25 +355,63 @@ if (!isset($_SESSION['balanco_geral'])) {
                 <th>P.E</th>
             </tr>
         </thead>";
-        } else {
-            echo "<thead>
-            <tr>
-                <th>Custo</th>
-                <th>Venda</th>
-                <th>Desconto</th>
-                <th>Nº Comprado</th>
-                <th>Nº Vendido</th>
-                <th>Nº Desconto</th>
-                <th>Balanço</th>
-                <th>Balanço Total</th>
-                <th>P.E</th>
-            </tr>
-        </thead>";
         }
+        return "<thead>
+        <tr>
+            <th>Custo</th>
+            <th>Venda</th>
+            <th>Desconto</th>
+            <th>Qnt Comprada</th>
+            <th>Qnt Vendida</th>
+            <th>Nº Desconto</th>
+            <th>Balanço</th>
+            <th>Balanço Total</th>
+            <th>P.E</th>
+        </tr>
+    </thead>";
+    }
+
+    function exibirTabela($conexao, $sql, $titulo)
+    {
+        global $balanco_geral;
+        $resultado = mysqli_query($conexao, $sql);
+
+        $balanco_total = 0;
+        $dados_produtos = [];
+
+        while ($dados = mysqli_fetch_array($resultado)) {
+            $quantidade_vendida = $dados['quantidade_vendida'] ?? 0;
+            $quantidade_desconto = $dados['quantidade_desconto'] ?? 0;
+
+            $balanco = ($quantidade_vendida * $dados['valor_venda']) +
+                ($quantidade_desconto * $dados['valor_desconto']) -
+                ($dados['qntdC'] * $dados['valor_custo']);
+
+            $balanco_total += $balanco;
+
+            if ($balanco >= 0 && empty($dados['ponto_equilibrio'])) {
+                date_default_timezone_set('America/Sao_Paulo');
+                $horaPe = date('H:i:s');
+                $pe = "UPDATE produto SET ponto_equilibrio = '$horaPe' WHERE id_produto = " . $dados['id_produto'];
+                mysqli_query($conexao, $pe);
+                $dados['ponto_equilibrio'] = $horaPe;
+            }
+
+            $dados['balanco_calculado'] = $balanco;
+            $dados_produtos[] = $dados;
+        }
+
+        $balanco_geral += $balanco_total;
+        $_SESSION['balanco_geral'] = $balanco_geral;
+
+        echo "<div class='table-container'>";
+        echo "<table class='planilha'>";
+        echo "<caption>$titulo</caption>";
+        echo renderizarCabecalho($titulo);
 
         foreach ($dados_produtos as $dados) {
             echo "<tr>";
-            if ($titulo === "Sacolé") {
+            if ($titulo === "Sacolé" or $titulo === "Refri") {
                 echo "<td>" . $dados['tipo'] . "</td>";
             }
             echo "<td>" . $dados['valor_custo'] . ",00 </td>";
@@ -506,13 +420,11 @@ if (!isset($_SESSION['balanco_geral'])) {
 
             // Ajusta os dados de acordo com o título
             echo "<td>" . $dados['qntdC'] . " </td>";
-            echo "<td>" . $dados['quantidade_vendida'] . " </td>";
-            echo "<td>" . $dados['quantidade_desconto'] . " </td>";
-
-
+            echo "<td>" . ($dados['quantidade_vendida'] ?? '0') . " </td>";
+            echo "<td>" . ($dados['quantidade_desconto'] ?? '0') . " </td>";
             echo "<td>" . $dados['balanco_calculado'] . ",00 </td>";
             echo "<td>" . $balanco_total . ",00 </td>";
-            echo "<td>" . $dados['ponto_equilibrio'] . " </td>";
+            echo "<td>" . ($dados['ponto_equilibrio'] ?? 'N/A') . " </td>";
             echo "</tr>";
         }
 
@@ -520,13 +432,25 @@ if (!isset($_SESSION['balanco_geral'])) {
     }
 
     $conexao = conectar();
-    exibirTabela($conexao, $queries[0], "Sacolé", false);
-    exibirTabela($conexao, $queries[1], "Cachorro Quente", false);
-    exibirTabela($conexao, $queries[2], "Hambúrguer", false);
-    exibirTabela($conexao, $queries[3], "Pastel", false);
-    exibirTabela($conexao, $queries[4], "Refri", false);
-    exibirTabela($conexao, $queries[5], "Enroladinho", false);
-    exibirTabela($conexao, $queries[6], "Bolo de pote", false);
+    foreach ($queries as [$titulo, $sql]) {
+        exibirTabela($conexao, $sql, $titulo);
+    }
+
+    if ($balanco_geral >= 0) {
+        date_default_timezone_set('America/Sao_Paulo');
+        $horaPe = date('H:i:s');
+
+        // Verifica se o ponto de equilíbrio já foi registrado
+        $verificaPe = "SELECT ponto_equilibrio FROM produto WHERE id_produto = 12";
+        $resultado = mysqli_query($conexao, $verificaPe);
+        $linha = mysqli_fetch_assoc($resultado);
+
+        // Se o ponto de equilíbrio ainda não foi registrado, realiza o UPDATE
+        if (empty($linha['ponto_equilibrio'])) {
+            $sql_ponto_equilibrio = "UPDATE produto SET ponto_equilibrio = '$horaPe' WHERE id_produto = 12";
+            mysqli_query($conexao, $sql_ponto_equilibrio);
+        }
+    }
 
     ?>
 

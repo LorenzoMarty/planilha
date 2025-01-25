@@ -21,18 +21,24 @@ $cachorro_venda = $cachorro_desconto = 0;
 $hamburguer_venda = $hamburguer_desconto = 0;
 $pastel_venda = $pastel_desconto = 0;
 $enroladinho_venda = $enroladinho_desconto = 0;
-$refri_venda = $refri_desconto = 0;
+$coca_venda = $coca_desconto = 0;
 $bolo_venda = $bolo_desconto = 0;
+$cocazero_venda = $cocazero_desconto = 0;
+$pepsi_venda = $pepsi_desconto = 0;
+$guarana_venda = $guarana_desconto = 0;
 
 // Consultas para cada grupo de produtos
 $queries = [
+    "SELECT * FROM produto WHERE id_produto = 1", // Pepsi
+    "SELECT * FROM produto WHERE id_produto = 2", // Guaraná
     "SELECT * FROM produto WHERE id_produto = 3 or 4", // Sacolé
     "SELECT * FROM produto WHERE id_produto = 5", // Cachorro Quente
     "SELECT * FROM produto WHERE id_produto = 6", // Hambúrguer
     "SELECT * FROM produto WHERE id_produto = 7", // Pastel
     "SELECT * FROM produto WHERE id_produto = 8", // Enroladinho
-    "SELECT * FROM produto WHERE id_produto = 9", // Refri
+    "SELECT * FROM produto WHERE id_produto = 9", // Coca
     "SELECT * FROM produto WHERE id_produto = 10", // Bolo de pote
+    "SELECT * FROM produto WHERE id_produto = 11", // Coca Zero
 ];
 
 // Processa cada consulta
@@ -43,6 +49,14 @@ foreach ($queries as $sql) {
         while ($dados = mysqli_fetch_array($resultado)) {
             // Associa os valores às variáveis correspondentes com base no id_produto
             switch ($dados['id_produto']) {
+                case 1: // Pepsi
+                    $pepsi_venda = $dados['valor_venda'];
+                    $pepsi_desconto = $dados['valor_desconto'];
+                    break;
+                case 2: // Guaraná
+                    $guarana_venda = $dados['valor_venda'];
+                    $guarana_desconto = $dados['valor_desconto'];
+                    break;
                 case 3: // Sacolé Fruta
                     $sacolef_venda = $dados['valor_venda'];
                     $sacolef_desconto = $dados['valor_desconto'];
@@ -67,13 +81,21 @@ foreach ($queries as $sql) {
                     $enroladinho_venda = $dados['valor_venda'];
                     $enroladinho_desconto = $dados['valor_desconto'];
                     break;
-                case 9: // Refri
-                    $refri_venda = $dados['valor_venda'];
-                    $refri_desconto = $dados['valor_desconto'];
+                case 9: // Coca Cola
+                    $coca_venda = $dados['valor_venda'];
+                    $coca_desconto = $dados['valor_desconto'];
                     break;
                 case 10: // Bolo de pote
                     $bolo_venda = $dados['valor_venda'];
                     $bolo_desconto = $dados['valor_desconto'];
+                    break;
+                case 11: // Coca Zero
+                    $cocazero_venda = $dados['valor_venda'];
+                    $cocazero_desconto = $dados['valor_desconto'];
+                    break;
+                case 13:
+                    $pipoca_venda = $dados['valor_venda'];
+                    $pipoca_desconto = $dados['valor_desconto'];
                     break;
             }
         }
@@ -590,9 +612,16 @@ foreach ($queries as $sql) {
 
         <!-- refri -->
         <div class="card" id="refri">
-            <img src="img/refri.webp" alt="refri">
+            <img src="img/refri.jpg" alt="refri">
             <h2>Refri</h2>
-            <p class="price">R$ <?= number_format($refri_venda, 2, ',', '.') ?></p>
+            <p class="price">R$ <?= number_format($coca_venda, 2, ',', '.') ?></p>
+            <select id="refri-type">
+                <option value="" disabled selected>Selecione um tipo</option> <!-- Label não selecionável -->
+                <option value="coca cola">Coca Cola</option>
+                <option value="coca zero">Coca Zero</option>
+                <option value="guarana">Guaraná</option>
+                <option value="pepsi">Pepsi</option>
+            </select>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -604,9 +633,23 @@ foreach ($queries as $sql) {
 
         <!-- bolo de pote -->
         <div class="card" id="bolodepote">
-            <img src="img/bolodepote.jpeg" alt="refri">
+            <img src="img/bolodepote.jpeg" alt="bolo de pote">
             <h2>Bolo de pote</h2>
             <p class="price">R$ <?= number_format($bolo_venda, 2, ',', '.') ?></p>
+            <div class="controls">
+                <button class="btn minus">-</button>
+                <input type="number" value="0" min="0" readonly>
+                <button class="btn plus">+</button>
+            </div>
+            <a href="#" class="add-btn">Adicionar</a>
+            <button class="price-toggle-btn normal"><i class="fa fa-times"></i></button>
+        </div>
+
+        <!-- pipoca -->
+        <div class="card" id="pipoca">
+            <img src="img/pipoca.jpg" alt="pipoca">
+            <h2>Pipoca</h2>
+            <p class="price">R$ <?= number_format($pipoca_venda, 2, ',', '.') ?></p>
             <div class="controls">
                 <button class="btn minus">-</button>
                 <input type="number" value="0" min="0" readonly>
@@ -655,6 +698,20 @@ foreach ($queries as $sql) {
                         priceNormal = <?= $sacolec_venda ?>;
                         pricePromo = <?= $sacolec_desconto ?>;
                     }
+                } else if (card.id === 'refri') {
+                    if (selectedOption === 'coca cola') {
+                        priceNormal = <?= $coca_venda ?>;
+                        pricePromo = <?= $coca_desconto ?>;
+                    } else if (selectedOption === 'coca zero') {
+                        priceNormal = <?= $cocazero_venda ?>;
+                        pricePromo = <?= $cocazero_desconto ?>;
+                    } else if (selectedOption === 'guarana') {
+                        priceNormal = <?= $guarana_venda ?>;
+                        pricePromo = <?= $guarana_desconto ?>;
+                    } else if (selectedOption === 'pepsi') {
+                        priceNormal = <?= $pepsi_venda ?>;
+                        pricePromo = <?= $pepsi_desconto ?>;
+                    }
                 } else if (card.id === 'cachorro') {
                     priceNormal = <?= $cachorro_venda ?>;
                     pricePromo = <?= $cachorro_desconto ?>;
@@ -667,12 +724,12 @@ foreach ($queries as $sql) {
                 } else if (card.id === 'enroladinho') {
                     priceNormal = <?= $enroladinho_venda ?>;
                     pricePromo = <?= $enroladinho_desconto ?>;
-                } else if (card.id === 'refri') {
-                    priceNormal = <?= $refri_venda ?>;
-                    pricePromo = <?= $refri_desconto ?>;
                 } else if (card.id === 'bolodepote') {
                     priceNormal = <?= $bolo_venda ?>;
                     pricePromo = <?= $bolo_desconto ?>;
+                } else if (card.id === 'pipoca') {
+                    priceNormal = <?= $pipoca_venda ?>;
+                    pricePromo = <?= $pipoca_desconto ?>;
                 }
 
                 // Atualiza o preço automaticamente com base na seleção
