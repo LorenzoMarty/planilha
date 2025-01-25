@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 25/01/2025 às 00:20
+-- Tempo de geração: 25/01/2025 às 01:04
 -- Versão do servidor: 8.3.0
 -- Versão do PHP: 8.2.18
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 
 INSERT INTO `usuario` (`nome`, `email`, `senha`, `id_usuario`, `perm`) VALUES
 ('Lorenzo', 'lorenzodreis@gmail.com', '$2y$10$H/5reKxjCUT4Ryt6I3d/MebIGrMaeeCklxHzoaasnqBeZlJGfex0y', 4, 1),
-('Adm', 'adm@gmail.com', '$2y$10$86JWZfmnFNluGD3H1yqJ/.JkSLpS1hzr4UiePlEmHnTxwjQrOoNtO', 5, 0);
+('Adm', 'adm@gmail.com', '$2y$10$86JWZfmnFNluGD3H1yqJ/.JkSLpS1hzr4UiePlEmHnTxwjQrOoNtO', 5, 1);
 
 -- --------------------------------------------------------
 
