@@ -2,7 +2,7 @@
 
 ## 🔍 Descrição
 
-O projeto **Planilha para o Diageek** é uma aplicação web desenvolvida como parte de uma atividade escolar. Ele simula um sistema de controle de vendas, permitindo o cadastro de produtos, registro de vendas e cálculo automático de totais. A aplicação foi construída utilizando PHP, HTML, CSS e MySQL, com foco na simplicidade e funcionalidade.
+O projeto **PlanilhaDiageek** é uma aplicação web desenvolvida como parte de uma atividade escolar. Ele simula um sistema de controle de vendas, permitindo o cadastro de produtos, registro de vendas e cálculo automático de totais. A aplicação foi construída utilizando PHP, HTML, CSS e MySQL, com foco na simplicidade e funcionalidade.
 
 ## 🚀 Funcionalidades
 
@@ -23,3 +23,4 @@ O projeto **Planilha para o Diageek** é uma aplicação web desenvolvida como p
 
    ```bash
    git clone https://github.com/LorenzoMarty/planilha.git
+
