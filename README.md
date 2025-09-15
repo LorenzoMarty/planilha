@@ -22,5 +22,6 @@ O projeto **PlanilhaDiageek** é uma aplicação web desenvolvida como parte de 
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/LorenzoMarty/planilha.git
+   git clone https://github.com/LorenzoMarty/planilhaDiageek.git
+
 
